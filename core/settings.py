@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django_rq',
     'rest_framework',
     'auth_app',
+    'content.apps.ContentConfig',
 ]
 
 MIDDLEWARE = [
