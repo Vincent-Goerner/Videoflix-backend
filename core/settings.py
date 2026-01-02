@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-q9umemf1a6^k54)adr7o9$+0zqb4&$w69#13j(%ows$!c&-!th')
+SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-q9umemf1a6^k54)adr7o9$+0zqb4&$$w69#13j(%ows$!c&-!th')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', default=True)
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'django_rq',
     'rest_framework',
     'auth_app',
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -85,7 +87,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", default="videoflix_db"),
+        "NAME": os.environ.get("DB_NAME", default="videoflix_database"),
         "USER": os.environ.get("DB_USER", default="videoflix_user"),
         "PASSWORD": os.environ.get("DB_PASSWORD", default="supersecretpassword"),
         "HOST": os.environ.get("DB_HOST", default="db"),
