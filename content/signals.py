@@ -7,9 +7,11 @@ from .tasks import convert_480p
 @receiver (post_save, sender=Video) # Variante 2 zur Verbindung
 def video_post_save(sender, instance, created, **kwargs):
     print('Video wurde gespeichert')
-    if created:
-        print('New Video created')
-        convert_480p(instance.video_file.path)
+    if created and instance.video_file:
+        source = instance.video_file.path
+        if os.path.exists(source):
+            print('New Video created')
+            convert_480p(source)
 
 # post_save.connect(video_post_save, sender=Video) # Variante 1 zur Verbindung 
 
