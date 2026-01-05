@@ -1,4 +1,5 @@
 import os
+import django_rq
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 from .models import Video
@@ -11,7 +12,8 @@ def video_post_save(sender, instance, created, **kwargs):
         source = instance.video_file.path
         if os.path.exists(source):
             print('New Video created')
-            convert_480p(source)
+            queue  = django_rq.get_queue('default', autocommit=True)
+            queue.enqueue(convert_480p, source)
 
 # post_save.connect(video_post_save, sender=Video) # Variante 1 zur Verbindung 
 
