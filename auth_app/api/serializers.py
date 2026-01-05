@@ -15,20 +15,12 @@ class RegistrationSerializer(serializers.ModelSerializer):
         }
 
     def validate_confirmed_password(self, value):
-        """
-        Ensures that the `confirmed_password` matches the provided `password`;
-        raises a validation error if they differ.
-        """
         password = self.initial_data.get('password')
         if password and value and password != value:
             raise serializers.ValidationError('Passwords do not match')
         return value
     
     def validate_email(self, value):
-        """
-        Validates that the email address is unique; raises an error if a user
-        with the given email already exists.
-        """
         if User.objects.filter(email=value).exists():
             raise serializers.ValidationError('Invalid credentials.')
         return value
@@ -64,3 +56,20 @@ class LoginTokenObtainPairSerializer(serializers.Serializer):
 
         payload['user'] = user
         return payload
+    
+
+class PasswordResetSerializer(serializers.Serializer):
+
+    email = serializers.EmailField()
+
+
+class PasswordConfirmSerializer(serializers.Serializer):
+
+    new_password = serializers.CharField(write_only=True, min_length=8)
+    confirmed_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirmed_password']:
+            raise serializers.ValidationError(
+                {"confirmed_password": "Passwords do not match."})
+        return data
