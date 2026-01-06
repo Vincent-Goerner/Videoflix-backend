@@ -11,7 +11,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.models import User
 
 from .serializers import RegistrationSerializer, LoginTokenObtainPairSerializer, PasswordResetSerializer, PasswordConfirmSerializer
-from .singals import send_activation_email, send_password_reset_email
+from .singals import user_registered, send_password_reset_email
 from .permissions import IsOwner
 
 
@@ -32,10 +32,10 @@ class RegistrationView(APIView):
                 f"https://videoflix.vincentgoerner.com/activate-account/{uid}/{token}/"
             )
 
-            send_activation_email(
-                user_email=user.email,
-                user_name=user.username,
-                activation_link=activation_link
+            user_registered.send(
+                sender=self.__class__,
+                user=user,
+                token=token
             )
 
             return Response(
@@ -48,6 +48,8 @@ class RegistrationView(APIView):
                 },
                 status=status.HTTP_201_CREATED
             )
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ActivateAccountView(APIView):
@@ -92,7 +94,6 @@ class CookieTokenObtainPairView(TokenObtainPairView):
                     "detail": "Login successfully!",
                     "user": {
                         "id": user.id,
-                        "username": user.username,
                         "email": user.email,
                     },
                 },

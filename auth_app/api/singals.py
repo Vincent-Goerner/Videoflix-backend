@@ -24,12 +24,12 @@ def send_email(subject, text, template, context, recipient):
 
 @receiver(user_registered)
 def send_activation_email(sender, user, token, **kwargs):
-    link = f"{FRONTEND_URL}/pages/auth/activate.html?uid={user.pk}&token={token}"
+    link = f"http://127.0.0.1:5500/pages/auth/activate.html?uid={user.pk}&token={token}"
 
     send_email(
         'Activate Your Videoflix Account',
         f'Please activate your account by visiting: {link}',
-        'activation_email.html',
+        'activation_mail.html',
         {'user_name': user.email, 'activation_link': link},
         user.email,
     )
@@ -37,7 +37,7 @@ def send_activation_email(sender, user, token, **kwargs):
 
 @receiver(password_reset_requested)
 def send_password_reset_email(sender, user, token, **kwargs):
-    link = f"{FRONTEND_URL}/pages/auth/confirm_password.html?uid={user.pk}&token={token}"
+    link = f"http://127.0.0.1:5500/pages/auth/confirm_password.html?uid={user.pk}&token={token}"
     hours = getattr(settings, 'PASSWORD_RESET_TIMEOUT', 86400) // 3600
 
     send_email(

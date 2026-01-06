@@ -6,7 +6,7 @@ urlpatterns = [
     path('activate/<str:uidb64>/<str:token>/', ActivateAccountView.as_view(), name='activate'),
     path('login/', CookieTokenObtainPairView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('token/refresh/', CookieTokenRefreshView.as_view(), name='token_refresh'),
-    path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
-    path('password_confirm/<str:uidb64>/<str:token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('token/refresh/', CookieTokenRefreshView.as_view(), name='token-refresh'),
+    path('password_reset/', PasswordResetView.as_view(), name='password-reset'),
+    path('password_confirm/<str:uidb64>/<str:token>/', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
 ]

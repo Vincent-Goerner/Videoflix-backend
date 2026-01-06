@@ -9,6 +9,7 @@ class CookieTokenTest(APITestCase):
     def setUp(self):
         self.url = reverse('login')
         self.user = User.objects.create_user(
+            username="test@example.com",
             email="test@example.com",
             password="testpassword"
         )

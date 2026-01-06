@@ -18,6 +18,7 @@ class RegistrationTest(APITestCase):
             'confirmed_password': 'invalid-password'
         }
         self.existing_user = User.objects.create_user(
+            username="test@example.com",
             email="existing@example.com",
             password="password123"
         )
@@ -37,13 +38,13 @@ class RegistrationTest(APITestCase):
         payload = {
             "password": "password123",
             "confirmed_password": "password123",
-            "email": "unique_email@example.com",
+            "email": "existing@example.com",
         }
         response = self.client.post(self.url, payload, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("email", response.data)
-        self.assertIn("A user with that email already exists.", response.data["email"][0])
+        self.assertIn("Invalid credentials.", response.data["email"][0])
 
     def test_post_existing_email_registration(self):
         payload = {

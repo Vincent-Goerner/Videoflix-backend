@@ -9,6 +9,7 @@ class LogoutTest(APITestCase):
     def setUp(self):
         self.url = reverse('logout')
         self.user = User.objects.create_user(
+            username="test@example.com",
             email="test@example.com",
             password="testpassword"
         )

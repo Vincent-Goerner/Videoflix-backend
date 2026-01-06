@@ -8,9 +8,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 class CookieTokenRefreshTest(APITestCase):
 
     def setUp(self):
-        self.url = reverse('token_refresh')
+        self.url = reverse('token-refresh')
         self.user = User.objects.create_user(
-            email="test@example.com", password="testpassword"
+           username="test@example.com", email="test@example.com", password="testpassword"
         )
         
         refresh = RefreshToken.for_user(self.user)

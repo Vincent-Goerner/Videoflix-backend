@@ -1,0 +1,71 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Activate Your Account</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fc;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo img {
+            width: 80px;
+            height: 80px;
+        }
+        h2 {
+            color: #1a23dd;
+            text-align: center;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .button {
+            display: block;
+            width: fit-content;
+            margin: 30px auto;
+            padding: 15px 35px;
+            background-color: #ff4d4d;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 30px;
+            text-align: center;
+        }
+        .footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="http://localhost:8000/static/imgs/logo_icon.svg" alt="logo icon">
+        </div>
+        <h2>Welcome to Videoflix!</h2>
+        <p>Hello {{ user_name }},</p>
+        <p>We're excited to have you on board! To finish setting up your account, please verify your email address by clicking the button below:</p>
+        <a href="{{ activation_link }}" class="button">Verify Email</a>
+        <p>If you didn't sign up for an account, you can safely ignore this email.</p>
+        <div class="footer">
+            <p>Cheers,<br>The Videoflix Team</p>
+        </div>
+    </div>
+</body>
+</html>
