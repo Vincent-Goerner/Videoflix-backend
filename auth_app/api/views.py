@@ -1,9 +1,7 @@
-import uuid
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.http import urlsafe_base64_encode
@@ -11,10 +9,9 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.models import User
-from django.conf import settings
 
 from .serializers import RegistrationSerializer, LoginTokenObtainPairSerializer, PasswordResetSerializer, PasswordConfirmSerializer
-from .utils import send_welcome_email, send_password_reset_email
+from .singals import send_activation_email, send_password_reset_email
 from .permissions import IsOwner
 
 
@@ -35,7 +32,7 @@ class RegistrationView(APIView):
                 f"https://videoflix.vincentgoerner.com/activate-account/{uid}/{token}/"
             )
 
-            send_welcome_email(
+            send_activation_email(
                 user_email=user.email,
                 user_name=user.username,
                 activation_link=activation_link
