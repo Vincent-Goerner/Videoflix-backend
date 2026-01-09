@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-q9umemf1a6^k54)adr7o9$+0zqb4&$w69#13j(%ows$!c&-!th')
+SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-q9umemf1a6^k54)adr7o9$+0zqb4&$$w69#13j(%ows$!c&-!th')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', default=True)
@@ -49,6 +49,15 @@ INSTALLED_APPS = [
     'content.apps.ContentConfig',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5500",
+    "http://localhost:5500",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
 ]
 
 MIDDLEWARE = [

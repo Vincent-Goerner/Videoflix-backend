@@ -28,10 +28,6 @@ class RegistrationView(APIView):
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
 
-            activation_link = (
-                f"https://videoflix.vincentgoerner.com/activate-account/{uid}/{token}/"
-            )
-
             user_registered.send(
                 sender=self.__class__,
                 user=user,
