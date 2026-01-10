@@ -3,26 +3,34 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.dispatch import Signal, receiver
 from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 
 
 user_registered = Signal()
-password_reset_requested = Signal()
+password_reset = Signal()
+frontend_url = os.getenv("FRONTEND_URL", "http://127.0.0.1:5500")
 
 
 def send_email(subject, text, template, context, recipient):
-    send_mail(
-        subject,
-        text,
-        settings.DEFAULT_FROM_EMAIL,
-        [recipient],
-        html_message=render_to_string(template, context),
-        fail_silently=False,
-    )
+    try:
+        send_mail(
+            subject,
+            text,
+            settings.DEFAULT_FROM_EMAIL,
+            [recipient],
+            html_message=render_to_string(template, context),
+            fail_silently=False,
+        )
+    except Exception as e:
+        print(f"Email sending failed: {e}")
 
 
 @receiver(user_registered)
 def send_activation_email(sender, user, token, **kwargs):
-    link = f"{os.getenv("FRONTEND_URL")}/pages/auth/activate.html?uid={user.pk}&token={token}"
+    
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    link = f"{frontend_url}/api/activate/{uidb64}/{token}/"
 
     send_email(
         'Activate Your Videoflix Account',
@@ -33,9 +41,10 @@ def send_activation_email(sender, user, token, **kwargs):
     )
 
 
-@receiver(password_reset_requested)
+@receiver(password_reset)
 def send_password_reset_email(sender, user, token, **kwargs):
-    link = f"{os.getenv("FRONTEND_URL")}/pages/auth/confirm_password.html?uid={user.pk}&token={token}"
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    link = f"{frontend_url}/password_confirm/{uidb64}/{token}/"
     hours = getattr(settings, 'PASSWORD_RESET_TIMEOUT', 86400) // 3600
 
     send_email(

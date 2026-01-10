@@ -5,13 +5,12 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.http import urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_decode
-from django.contrib.auth.models import User
 
 from .serializers import RegistrationSerializer, LoginTokenObtainPairSerializer, PasswordResetSerializer, PasswordConfirmSerializer
-from .singals import user_registered, send_password_reset_email
+from .singals import user_registered, password_reset
 from .permissions import IsOwner
 
 
@@ -73,14 +72,14 @@ class CookieTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         serializer = LoginTokenObtainPairSerializer(data=request.data)
 
+        if not request.user.is_active:
+            return Response(
+                {"detail": "Account not activated"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         if serializer.is_valid():
             user = serializer.validated_data['user']
-
-            if not user.is_active:
-                return Response(
-                    {"detail": "Account not activated"},
-                    status=status.HTTP_403_FORBIDDEN
-                )
 
             refresh = RefreshToken.for_user(user)
             access = refresh.access_token
@@ -217,7 +216,7 @@ class PasswordResetView(APIView):
 
         token = default_token_generator.make_token(user)
 
-        send_password_reset_email.send(
+        password_reset.send(
             sender=self.__class__,
             user=user,
             token=token
@@ -252,7 +251,8 @@ class PasswordResetConfirmView(APIView):
 
     def _get_user(self, uidb64):
         try:
-            return User.objects.get(pk=uidb64)
+            uid = urlsafe_base64_decode(uidb64).decode()
+            return User.objects.get(pk=uid)
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return None
 

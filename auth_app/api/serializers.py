@@ -41,7 +41,7 @@ class LoginTokenObtainPairSerializer(serializers.Serializer):
     password = serializers.CharField()
 
     def validate(self, payload):
-
+        
         payload_email = payload.get('email')
         payload_password = payload.get('password')
 
