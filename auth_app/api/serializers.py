@@ -37,25 +37,27 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
 class LoginTokenObtainPairSerializer(serializers.Serializer):
     
-    email = serializers.CharField()
-    password = serializers.CharField()
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
 
-    def validate(self, payload):
-        
-        payload_email = payload.get('email')
-        payload_password = payload.get('password')
+    def validate(self, data):
+        email = data.get('email')
+        password = data.get('password')
 
         try:
-            user = User.objects.get(username=payload_email)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
             raise serializers.ValidationError("Email or password is not correct")
 
-        user = authenticate(username=payload_email, password=payload_password)
-        if not user:
+        if not user.is_active:
+            raise serializers.ValidationError("Account is not activated")
+
+        user = authenticate(username=user.username, password=password)
+        if user is None:
             raise serializers.ValidationError("Email or password is not correct")
 
-        payload['user'] = user
-        return payload
+        data['user'] = user
+        return data
     
 
 class PasswordResetSerializer(serializers.Serializer):

@@ -8,6 +8,7 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.models import User
 
 from .serializers import RegistrationSerializer, LoginTokenObtainPairSerializer, PasswordResetSerializer, PasswordConfirmSerializer
 from .singals import user_registered, password_reset
@@ -24,7 +25,6 @@ class RegistrationView(APIView):
         if serializer.is_valid():
             user = serializer.save()
 
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
 
             user_registered.send(
@@ -65,55 +65,49 @@ class ActivateAccountView(APIView):
             return Response({"error": "Invalid user."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CookieTokenObtainPairView(TokenObtainPairView):
+class CookieTokenObtainPairView(APIView):
 
     permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = LoginTokenObtainPairSerializer(data=request.data)
 
-        if not request.user.is_active:
-            return Response(
-                {"detail": "Account not activated"},
-                status=status.HTTP_403_FORBIDDEN
-            )
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
 
-        if serializer.is_valid():
-            user = serializer.validated_data['user']
+        user = serializer.validated_data['user']
 
-            refresh = RefreshToken.for_user(user)
-            access = refresh.access_token
-            
-            response = Response(
-                {
-                    "detail": "Login successfully!",
-                    "user": {
-                        "id": user.id,
-                        "email": user.email,
-                    },
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        response = Response(
+            {
+                "detail": "Login successfully!",
+                "user": {
+                    "id": user.id,
+                    "email": user.email,
                 },
-                status=status.HTTP_200_OK,
-            )
-            
-            response.set_cookie(
-                key="access_token",
-                value=access,
-                httponly=True,
-                secure=True,
-                samesite="Lax"
-            )
+            },
+            status=status.HTTP_200_OK,
+        )
 
-            response.set_cookie(
-                key="refresh_token",
-                value=refresh,
-                httponly=True,
-                secure=True,
-                samesite="Lax"
-            )
+        response.set_cookie(
+            key="access_token",
+            value=str(access),
+            httponly=True,
+            secure=True,
+            samesite="Lax"
+        )
 
-            return response
-        
-        return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+        response.set_cookie(
+            key="refresh_token",
+            value=str(refresh),
+            httponly=True,
+            secure=True,
+            samesite="Lax"
+        )
+
+        return response
     
 
 class CookieTokenRefreshView(TokenRefreshView):
