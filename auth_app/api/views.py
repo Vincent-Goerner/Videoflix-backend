@@ -4,9 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.utils.http import urlsafe_base64_encode
 from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 
@@ -50,6 +48,7 @@ class RegistrationView(APIView):
 class ActivateAccountView(APIView):
     
     permission_classes = [AllowAny]
+
     def get(self, request, uidb64, token, *args, **kwargs):
       
         try:
@@ -65,7 +64,7 @@ class ActivateAccountView(APIView):
             return Response({"error": "Invalid user."}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CookieTokenObtainPairView(APIView):
+class CookieTokenObtainPairView(TokenObtainPairView):
 
     permission_classes = [AllowAny]
 
