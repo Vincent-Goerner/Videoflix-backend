@@ -30,7 +30,10 @@ def send_email(subject, text, template, context, recipient):
 def send_activation_email(sender, user, token, **kwargs):
     
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-    link = f"{frontend_url}/api/activate/{uidb64}/{token}/"
+    link = (
+        f"{frontend_url}/pages/auth/activate.html"
+        f"?uid={uidb64}&token={token}"
+    )
 
     send_email(
         'Activate Your Videoflix Account',
@@ -44,7 +47,10 @@ def send_activation_email(sender, user, token, **kwargs):
 @receiver(password_reset)
 def send_password_reset_email(sender, user, token, **kwargs):
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-    link = f"{frontend_url}/password_confirm/{uidb64}/{token}/"
+    link = (
+        f"{frontend_url}/pages/auth/confirm_password.html"
+        f"?uid={uidb64}&token={token}"
+    )
     hours = getattr(settings, 'PASSWORD_RESET_TIMEOUT', 86400) // 3600
 
     send_email(
