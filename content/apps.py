@@ -5,4 +5,4 @@ class ContentConfig(AppConfig):
     name = 'content'
 
     def ready(self):
-        from . import signals
+        from .api import signals
