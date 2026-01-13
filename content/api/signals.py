@@ -2,16 +2,14 @@ import os
 import django_rq
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
-from .models import Video
-from .tasks import convert_to_resolution
+from content.models import Video
+from content.tasks import convert_to_resolution
 
 @receiver (post_save, sender=Video)
 def video_post_save(sender, instance, created, **kwargs):
-    print('Video wurde gespeichert')
     if created and instance.video_file:
         source = instance.video_file.path
         if os.path.exists(source):
-            print('New Video created')
             queue  = django_rq.get_queue('default', autocommit=True)
             queue.enqueue(convert_to_resolution, source)
 
@@ -20,3 +18,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
     if instance.video_file:
         if os.path.isfile(instance.video_file.path):
             os.remove(instance.video_file.path)
+    
+    if instance.thumbnail:
+        if os.path.isfile(instance.thumbnail.path):
+            os.remove(instance.thumbnail.path)
