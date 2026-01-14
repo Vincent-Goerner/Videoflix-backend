@@ -11,7 +11,7 @@ class VideoListSerializer(serializers.ModelSerializer):
         fields = ['id', 'created_at', 'title', 'description', 'thumbnail_url', 'category']
 
     def get_thumbnail_url(self, obj):
-        thumbnail = getattr(obj, "thumbnail", None)
+        thumbnail = getattr(obj, "thumbnail_url", None)
 
         if not thumbnail or not thumbnail.name:
             return None
