@@ -4,19 +4,20 @@ from content.models import Video
 
 
 class VideoListSerializer(serializers.ModelSerializer):
-    thumbnail = serializers.SerializerMethodField()
+    thumbnail_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Video
-        fields = ['id', 'created_at', 'title', 'description', 'thumbnail', 'category']
+        fields = ['id', 'created_at', 'title', 'description', 'thumbnail_url', 'category']
 
-    def get_thumbnail(self, obj):
-        thumbnail = getattr(obj, "thumbnail", None)
-
-        if not thumbnail or not thumbnail.name:
+    def get_thumbnail_url(self, obj):
+        
+        if not obj.thumbnail:
             return None
 
-        request = self.context.get("request")
-        url = thumbnail.url
+        url = getattr(obj.thumbnail, 'url', None)
+        if not url:
+            return None
 
+        request = self.context.get('request')
         return request.build_absolute_uri(url) if request else url

@@ -37,7 +37,7 @@ class VideoPlaylistViewTest(APITestCase):
     def _create_manifest(self, resolution="720p"):
         base_path = os.path.join(
             settings.MEDIA_ROOT,
-            "video",
+            "videos",
             str(self.video.id),
             resolution,
         )

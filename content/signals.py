@@ -5,7 +5,10 @@ from django.dispatch import receiver
 from django.conf import settings
 from django.db.models.signals import post_save, post_delete
 from content.models import Video
-from content.tasks import convert_to_hls, delete_origin_video_file
+from content.tasks import (
+    convert_to_hls, 
+    delete_origin_video_file
+)
 
 
 @receiver (post_save, sender=Video)
@@ -16,8 +19,7 @@ def video_post_save(sender, instance, created, **kwargs):
             queue  = django_rq.get_queue('default', autocommit=True)
             convert_video = queue.enqueue(convert_to_hls, source, instance.id)
             queue.enqueue(
-                delete_origin_video_file,
-                instance.video_file.path,
+                delete_origin_video_file, source,
                 depends_on=convert_video
             )
 
@@ -28,7 +30,7 @@ def auto_delete_files_on_video_delete(sender, instance, **kwargs):
     if instance.video_file and os.path.isfile(instance.video_file.path):
         os.remove(instance.video_file.path)
 
-    hls_dir = os.path.join(settings.MEDIA_ROOT, 'video', str(instance.id))
+    hls_dir = os.path.join(settings.MEDIA_ROOT, 'videos', str(instance.id))
     if os.path.isdir(hls_dir):
         shutil.rmtree(hls_dir)
 

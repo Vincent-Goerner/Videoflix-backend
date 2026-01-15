@@ -40,7 +40,7 @@ class BaseHLSVideoView(APIView):
     def build_video_path(self, movie_id: int, resolution: str, filename: str) -> str:
         path = os.path.join(
             settings.MEDIA_ROOT,
-            "video",
+            "videos",
             str(movie_id),
             resolution,
             filename,
