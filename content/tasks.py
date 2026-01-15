@@ -5,7 +5,7 @@ from django.conf import settings
 
 def convert_to_hls(input_file: str, video_id: int) -> None:
     
-    target_root = os.path.join(settings.MEDIA_ROOT, 'videos', str(video_id))
+    target_root = os.path.join(settings.MEDIA_ROOT, 'video', str(video_id))
 
     profiles = [
         {'resolution':'480p','scale': '850x480', 'bitrate': '1000k'},
@@ -17,12 +17,9 @@ def convert_to_hls(input_file: str, video_id: int) -> None:
         resolution_dir = os.path.join(target_root, profile['resolution'])
         os.makedirs(resolution_dir, exist_ok=True)
 
-        playlist_file = os.path.join(
-            resolution_dir,
-            f"index.m3u8"
-        )
+        playlist_file = os.path.join(resolution_dir, f"index.m3u8")
 
-        base_url = f"/videos/{video_id}/{profile['resolution']}/"
+        base_url = f"/video/{video_id}/{profile['resolution']}/"
 
         cmd = [
             'ffmpeg',
@@ -41,3 +38,8 @@ def convert_to_hls(input_file: str, video_id: int) -> None:
         ]
 
         subprocess.run(cmd, check=True)
+
+
+def delete_origin_video_file(source):
+    if os.path.isfile(source):
+        os.remove(source)

@@ -37,7 +37,7 @@ class HLSVideoSegmentViewTest(APITestCase):
     def _create_segment(self, resolution="720p", segment="segment1.ts"):
         base_path = os.path.join(
             settings.MEDIA_ROOT,
-            "videos",
+            "video",
             str(self.video.id),
             resolution,
         )
