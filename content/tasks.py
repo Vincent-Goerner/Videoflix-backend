@@ -4,7 +4,13 @@ from django.conf import settings
 
 
 def convert_to_hls(input_file: str, video_id: int) -> None:
+    """
+    Convert a video file to HLS format in multiple resolutions.
     
+    - Generates HLS playlists (.m3u8) and segments for 480p, 720p, and 1080p.
+    - Saves the output in MEDIA_ROOT/videos/<video_id>/<resolution>/index.m3u8.
+    - Uses ffmpeg with libx264 for video and AAC for audio encoding.
+    """
     profiles = [
         {'resolution':'480p','scale': '850x480', 'bitrate': '1000k'},
         {'resolution':'720p','scale': '1280x720', 'bitrate': '2500k'},
@@ -36,6 +42,11 @@ def convert_to_hls(input_file: str, video_id: int) -> None:
 
 
 def delete_origin_video_file(source):
-
+    """
+    Delete the original uploaded video file from disk.
+    
+    - Checks if the file exists before removing.
+    - Typically used after HLS conversion is complete.
+    """
     if os.path.isfile(source):
         os.remove(source)

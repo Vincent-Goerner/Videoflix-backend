@@ -13,6 +13,10 @@ frontend_url = os.getenv("FRONTEND_URL", "http://127.0.0.1:5500")
 
 
 def send_email(subject, text, template, context, recipient):
+    """
+    Send an email with optional HTML content rendered from a template.
+    Wraps Django's send_mail and logs errors on failure.
+    """
     try:
         send_mail(
             subject,
@@ -28,7 +32,10 @@ def send_email(subject, text, template, context, recipient):
 
 @receiver(user_registered)
 def send_activation_email(sender, user, token, **kwargs):
-    
+    """
+    Send an account activation email after user registration.
+    Generates a UID/token-based activation link for the frontend.
+    """
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
     link = (
         f"{frontend_url}/pages/auth/activate.html"
@@ -46,6 +53,10 @@ def send_activation_email(sender, user, token, **kwargs):
 
 @receiver(password_reset)
 def send_password_reset_email(sender, user, token, **kwargs):
+    """
+    Send a password reset email with a time-limited reset link.
+    Uses Django settings to determine link validity duration.
+    """
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
     link = (
         f"{frontend_url}/pages/auth/confirm_password.html"

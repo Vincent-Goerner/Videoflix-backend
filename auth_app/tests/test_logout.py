@@ -5,8 +5,14 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
 class LogoutTest(APITestCase):
-
+    """
+    Test cases for the logout endpoint.
+    Verifies successful logout and token invalidation.
+    """
     def setUp(self):
+        """
+        Create a test user and define the logout URL.
+        """
         self.url = reverse('logout')
         self.user = User.objects.create_user(
             username="test@example.com",
@@ -15,6 +21,9 @@ class LogoutTest(APITestCase):
         )
 
     def test_post_logout_successful(self):
+        """
+        Ensure logout returns 200 OK with valid authentication.
+        """
         refresh = RefreshToken.for_user(self.user)
         access_token = str(refresh.access_token)
         refresh_token = str(refresh)

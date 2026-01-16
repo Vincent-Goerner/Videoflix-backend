@@ -9,15 +9,21 @@ from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 
 from .serializers import RegistrationSerializer, LoginTokenObtainPairSerializer, PasswordResetSerializer, PasswordConfirmSerializer
-from .singals import user_registered, password_reset
+from auth_app.signals import user_registered, password_reset
 from .permissions import IsOwner
 
 
 class RegistrationView(APIView):
-
+    """
+    Handle user registration requests.
+    Creates an inactive user and triggers the activation email signal.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """
+        Validate input data, create a user, and return registration details.
+        """
         serializer = RegistrationSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -46,11 +52,16 @@ class RegistrationView(APIView):
 
 
 class ActivateAccountView(APIView):
-    
+    """
+    Activate a user account using a UID and token.
+    Validates the activation link and enables the account.
+    """
     permission_classes = [AllowAny]
 
     def get(self, request, uidb64, token, *args, **kwargs):
-      
+        """
+        Verify activation token and activate the corresponding user.
+        """
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             user = User.objects.get(pk=uid)
@@ -65,10 +76,16 @@ class ActivateAccountView(APIView):
 
 
 class CookieTokenObtainPairView(TokenObtainPairView):
-
+    """
+    Authenticate a user and issue JWT tokens via HTTP-only cookies.
+    Uses email/password validation before token generation.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """
+        Validate credentials and set access/refresh tokens as cookies.
+        """
         serializer = LoginTokenObtainPairSerializer(data=request.data)
 
         if not serializer.is_valid():
@@ -110,10 +127,16 @@ class CookieTokenObtainPairView(TokenObtainPairView):
     
 
 class CookieTokenRefreshView(TokenRefreshView):
-
+    """
+    Refresh the JWT access token using a refresh token from cookies.
+    Issues a new access token if the refresh token is valid.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
+        """
+        Validate refresh token and update the access token cookie.
+        """
         refresh = request.COOKIES.get("refresh_token")
 
         if refresh is None:
@@ -154,10 +177,16 @@ class CookieTokenRefreshView(TokenRefreshView):
     
 
 class LogoutView(APIView):
-
+    """
+    Log out the current user.
+    Blacklists the refresh token and clears authentication cookies.
+    """
     permission_classes = [IsOwner]
 
     def post(self, request):
+        """
+        Invalidate refresh token and remove access/refresh cookies.
+        """
         try:
             refresh_token = request.COOKIES.get("refresh_token")
             if refresh_token:
@@ -182,10 +211,16 @@ class LogoutView(APIView):
     
 
 class PasswordResetView(APIView):
-
+    """
+    Initiate a password reset process.
+    Sends a password reset email if the user exists.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request):
+        """
+        Validate email and trigger the password reset signal.
+        """
         serializer = PasswordResetSerializer(data=request.data)
 
         if not serializer.is_valid():
@@ -202,6 +237,9 @@ class PasswordResetView(APIView):
         )
 
     def _handle_password_reset_request(self, email):
+        """
+        Generate a reset token and send the password reset signal.
+        """
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
@@ -217,10 +255,16 @@ class PasswordResetView(APIView):
         
 
 class PasswordResetConfirmView(APIView):
-
+    """
+    Confirm a password reset using UID and token.
+    Sets a new password after successful validation.
+    """
     permission_classes = [AllowAny]
 
     def post(self, request, uidb64, token):
+        """
+        Validate reset data, token, and update the user password.
+        """
         serializer = PasswordConfirmSerializer(data=request.data)
 
         if not serializer.is_valid():
@@ -243,6 +287,9 @@ class PasswordResetConfirmView(APIView):
         )
 
     def _get_user(self, uidb64):
+        """
+        Decode UID and return the associated user or None.
+        """
         try:
             uid = urlsafe_base64_decode(uidb64).decode()
             return User.objects.get(pk=uid)
@@ -250,6 +297,9 @@ class PasswordResetConfirmView(APIView):
             return None
 
     def _validate_token(self, user, token):
+        """
+        Ensure the reset token is valid for the given user.
+        """
         if user is None:
             return Response(
                 {"error": "Invalid reset link."},
@@ -265,5 +315,8 @@ class PasswordResetConfirmView(APIView):
         return None
 
     def _set_new_password(self, user, new_password):
+        """
+        Update and persist the user's new password.
+        """
         user.set_password(new_password)
         user.save()

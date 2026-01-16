@@ -13,6 +13,13 @@ from content.tasks import (
 
 @receiver (post_save, sender=Video)
 def video_post_save(sender, instance, created, **kwargs):
+    """
+    Triggered after a Video instance is saved.
+    
+    - If the video is newly created and a video file exists:
+      1. Enqueue conversion of the uploaded video to HLS format.
+      2. After conversion, enqueue deletion of the original video file.
+    """
     if created and instance.video_file:
         source = instance.video_file.path
         if os.path.exists(source):
@@ -26,7 +33,13 @@ def video_post_save(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Video)       
 def auto_delete_files_on_video_delete(sender, instance, **kwargs):
-   
+    """
+    Triggered after a Video instance is deleted.
+    
+    - Deletes the associated original video file, if it exists.
+    - Deletes the HLS directory for the video, if it exists.
+    - Deletes the video thumbnail file, if it exists.
+    """
     if instance.video_file and os.path.isfile(instance.video_file.path):
         os.remove(instance.video_file.path)
 

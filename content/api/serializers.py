@@ -4,6 +4,9 @@ from content.models import Video
 
 
 class VideoListSerializer(serializers.ModelSerializer):
+    """
+    Serialize Video objects with standard fields and a fully qualified thumbnail URL.
+    """
     thumbnail_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -11,7 +14,9 @@ class VideoListSerializer(serializers.ModelSerializer):
         fields = ['id', 'created_at', 'title', 'description', 'thumbnail_url', 'category']
 
     def get_thumbnail_url(self, obj):
-        
+        """
+        Return absolute URL of the thumbnail if it exists, otherwise None.
+        """
         if not obj.thumbnail:
             return None
 

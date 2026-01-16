@@ -8,8 +8,14 @@ from django.contrib.auth.tokens import default_token_generator
 
 
 class ActivateAccountViewTest(APITestCase):
-
+    """
+    Test cases for the account activation API view.
+    Verifies successful activation and error handling.
+    """
     def setUp(self):
+        """
+        Create an inactive test user and generate UID/token.
+        """
         self.user = User.objects.create_user(
             username='testuser',
             email='test@example.com',
@@ -20,6 +26,9 @@ class ActivateAccountViewTest(APITestCase):
         self.token = default_token_generator.make_token(self.user)
 
     def test_get_activate_account_success(self):
+        """
+        Ensure a valid activation link activates the user.
+        """
         url = reverse('activate', kwargs={'uidb64': self.uidb64, 'token': self.token})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -28,12 +37,18 @@ class ActivateAccountViewTest(APITestCase):
         self.assertTrue(self.user.is_active)
 
     def test_get_activate_account_invalid_token(self):
+        """
+        Ensure an invalid token returns a 400 error.
+        """
         url = reverse('activate', kwargs={'uidb64': self.uidb64, 'token': 'wrongtoken'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Activation link is invalid", response.data['error'])
 
     def test_get_activate_account_invalid_user(self):
+        """
+        Ensure an invalid UID returns an error response.
+        """
         url = reverse('activate', kwargs={'uidb64': 'MTIz', 'token': self.token})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

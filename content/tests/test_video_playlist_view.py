@@ -13,8 +13,15 @@ from content.models import Video
 User = get_user_model()
 
 class VideoPlaylistViewTest(APITestCase):
-
+    """
+    Test suite for VideoPlaylistView to ensure correct serving of HLS playlists (.m3u8).
+    Covers playlist retrieval, missing video, and missing file scenarios.
+    """
     def setUp(self):
+        """
+        Prepare test environment: create temporary MEDIA_ROOT, test user, sample video,
+        and authenticate the test client.
+        """
         self._temp_media = tempfile.mkdtemp()
         self._old_media_root = settings.MEDIA_ROOT
         settings.MEDIA_ROOT = self._temp_media
@@ -31,10 +38,16 @@ class VideoPlaylistViewTest(APITestCase):
         self.client.force_authenticate(user=self.user)
 
     def tearDown(self):
+        """
+        Restore original MEDIA_ROOT and remove temporary files.
+        """
         settings.MEDIA_ROOT = self._old_media_root
         shutil.rmtree(self._temp_media)
 
     def _create_manifest(self, resolution="720p"):
+        """
+        Helper method to create a fake HLS playlist file (index.m3u8) for testing.
+        """
         base_path = os.path.join(
             settings.MEDIA_ROOT,
             "videos",
@@ -48,6 +61,10 @@ class VideoPlaylistViewTest(APITestCase):
             f.write("#EXTM3U")
 
     def test_get_playlist_success(self):
+        """
+        Test that an existing playlist is returned successfully with status 200,
+        correct content type, and expected file content.
+        """
         self._create_manifest()
 
         url = reverse(
@@ -68,6 +85,9 @@ class VideoPlaylistViewTest(APITestCase):
         self.assertIn("#EXTM3U", response.content.decode())
 
     def test_get_playlist_video_not_found(self):
+        """
+        Test that requesting a playlist for a non-existent video returns 404 Not Found.
+        """
         url = reverse(
             "video-playlist",
             kwargs={
@@ -80,6 +100,9 @@ class VideoPlaylistViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_get_playlist_file_not_found(self):
+        """
+        Test that requesting a playlist when the file does not exist returns 404 Not Found.
+        """
         url = reverse(
             "video-playlist",
             kwargs={
