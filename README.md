@@ -138,34 +138,34 @@ The server is accessible at http://localhost:8000.
 
 This project uses a .env file to manage environment-specific and sensitive settings such as:
 
-# Admin (⚠️ Required - Change these values)
+### Admin (⚠️ Required - Change these values)
 DJANGO_SUPERUSER_USERNAME
 DJANGO_SUPERUSER_PASSWORD
 DJANGO_SUPERUSER_EMAIL
 
-# Django (⚠️ Required - Change these values)
+### Django (⚠️ Required - Change these values)
 SECRET_KEY
 DEBUG
 ALLOWED_HOSTS
 CSRF_TRUSTED_ORIGINS
 
-# Frontend URL (✅ Optional - Change if using different URL)
+### Frontend URL (✅ Optional - Change if using different URL)
 FRONTEND_URL
 
-# Database (⚠️ Required - Change username and password)
+### Database (⚠️ Required - Change username and password)
 DB_NAME
 DB_USER
 DB_PASSWORD
 DB_HOST
 DB_PORT
 
-# Redis (✅ Optional - Default values work with Docker)
+### Redis (✅ Optional - Default values work with Docker)
 REDIS_HOST
 REDIS_LOCATION
 REDIS_PORT
 REDIS_DB
 
-# Email Configuration (⚠️ Required - Configure your SMTP settings)
+### Email Configuration (⚠️ Required - Configure your SMTP settings)
 EMAIL_HOST
 EMAIL_PORT
 EMAIL_HOST_USER
