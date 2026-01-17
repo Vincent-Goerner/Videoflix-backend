@@ -139,14 +139,14 @@ Local Setup
 
 # 3. Create database
 
-  CREATE DATABASE videoflix_db;
+  CREATE DATABASE videoflix_db
 
 # 4. Create user
 
-  CREATE USER videoflix_user WITH PASSWORD 'your_password';
+  CREATE USER videoflix_user WITH PASSWORD your_password
 
 # 5. Grant privileges
-  GRANT ALL PRIVILEGES ON DATABASE videoflix_db TO videoflix_user;
+  GRANT ALL PRIVILEGES ON DATABASE videoflix_db TO videoflix_user
 ```
 
 Docker Setup
