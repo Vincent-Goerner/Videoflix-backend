@@ -98,6 +98,9 @@ cd Videoflix-backend
   # Linux/Mac
   cp .env.template .env
 
+| ⚠️IMPORTANT
+| It is absolutely necessary that the .env is filled with your configurations!
+
 # 3. Build Docker Image
 
 docker-compose build
@@ -111,9 +114,6 @@ docker-compose up -d
 docker-compose exec web python manage.py makemigrations
 docker-compose exec web python manage.py migrate
 ```
-
-| ⚠️IMPORTANT  
-| It is absolutely necessary that the .env is filled with your configurations!
 
 The server is accessible at http://localhost:8000.
 
