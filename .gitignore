@@ -6,6 +6,11 @@ __pycache__/
 *.pyd
 
 
+# 🔄 Django Migrations
+**/migrations/
+!**/migrations/__init__.py
+
+
 # 🧪 Testing & Coverage
 
 .pytest_cache/
@@ -62,6 +67,7 @@ _build/
 *.bak
 *.old
 .DS_Store
+up.bat
 
 
 # 🐇 Celery Worker File (optional, falls temporär erstellt)
