@@ -1,7 +1,7 @@
 # Videoflix
 
 ## 🔍 Overview
-Videoflix is a Django-based, video streaming platform developed as part of the Developer Akademie program. It allows registered users to stream videos with HLS support from different categories and change video resolution.
+Videoflix is a Django-based, video streaming platform developed as part of the Developer Akademie program. It allows registered users to stream videos with HLS support from different categories and video resolution.
 
 ## ✨ Features
 
@@ -21,6 +21,7 @@ Videoflix is a Django-based, video streaming platform developed as part of the D
 ## ⚙️ Installation
 
 ### Prerequisites
+#### Local Setup
 - Python 3.13+
 - Django 4.0+
 - Django REST Framework
@@ -28,6 +29,10 @@ Videoflix is a Django-based, video streaming platform developed as part of the D
 - SimpleJWT
 - FFmpeg
 - redis
+
+#### Docker Setup
+- Docker 28.5.1+
+- Docker Compose 2.40+
 
 Full list: requirements.txt (Installation guide see below)
 
@@ -42,20 +47,20 @@ cd Videoflix-backend
 
 cd Videoflix-backend
 
-  # Windows
+  # Windows:
   copy .env.template .env
 
-  # Linux/Mac
+  # Linux/Mac:
   cp .env.template .env    
 
 # 3. Create and enter virtual environment
 
 python -m venv env
 
-  #Mac and Linux:
+  # Mac and Linux:
     source env/bin/activate
 
-  # On Windows:
+  # Windows:
     env\Scripts\activate
 
 # 4. Install dependencies
@@ -107,10 +112,46 @@ docker-compose exec web python manage.py makemigrations
 docker-compose exec web python manage.py migrate
 ```
 
-### !IMPORTANT!
-It is absolutely necessary that the .env is filled with your configurations!
+| ### !IMPORTANT!
+| It is absolutely necessary that the .env is filled with your configurations!
 
 The server is accessible at http://localhost:8000.
+
+### Database Setup
+
+Local Setup
+
+```bash
+# 1. PostgreSQL Installation
+
+  # Windows:
+    choco install postgresql
+
+  # Linux:
+    sudo apt install postgresql
+
+  # Mac:
+    brew install postgresql
+
+# 2. Connect to postgresql
+
+  psql -U postgres
+
+# 3. Create database
+
+  CREATE DATABASE videoflix_db;
+
+# 4. Create user
+
+  CREATE USER videoflix_user WITH PASSWORD 'your_password';
+
+# 5. Grant privileges
+  GRANT ALL PRIVILEGES ON DATABASE videoflix_db TO videoflix_user;
+```
+
+Docker Setup
+
+The database will be automaticly created with the docker-compose.yml
 
 ## 🚀 API Endpoints (Examples)
 
