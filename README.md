@@ -112,8 +112,8 @@ docker-compose exec web python manage.py makemigrations
 docker-compose exec web python manage.py migrate
 ```
 
-| !IMPORTANT!
-| It is absolutely necessary that the .env is filled with your configurations!
+| ⚠️IMPORTANT |
+| It is absolutely necessary that the .env is filled with your configurations! |
 
 The server is accessible at http://localhost:8000.
 
