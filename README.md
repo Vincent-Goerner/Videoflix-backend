@@ -112,7 +112,7 @@ docker-compose exec web python manage.py makemigrations
 docker-compose exec web python manage.py migrate
 ```
 
-| ### !IMPORTANT!
+| !IMPORTANT!
 | It is absolutely necessary that the .env is filled with your configurations!
 
 The server is accessible at http://localhost:8000.
@@ -180,40 +180,40 @@ The database will be automaticly created with the docker-compose.yml
 This project uses a .env file to manage environment-specific and sensitive settings such as:
 
 ### Admin (⚠️ Required - Change these values)
-DJANGO_SUPERUSER_USERNAME
-DJANGO_SUPERUSER_PASSWORD
-DJANGO_SUPERUSER_EMAIL
+- DJANGO_SUPERUSER_USERNAME
+- DJANGO_SUPERUSER_PASSWORD
+- DJANGO_SUPERUSER_EMAIL
 
 ### Django (⚠️ Required - Change these values)
-SECRET_KEY
-DEBUG
-ALLOWED_HOSTS
-CSRF_TRUSTED_ORIGINS
+- SECRET_KEY
+- DEBUG
+- ALLOWED_HOSTS
+- CSRF_TRUSTED_ORIGINS
 
 ### Frontend URL (✅ Optional - Change if using different URL)
-FRONTEND_URL
+- FRONTEND_URL
 
 ### Database (⚠️ Required - Change username and password)
-DB_NAME
-DB_USER
-DB_PASSWORD
-DB_HOST
-DB_PORT
+- DB_NAME
+- DB_USER
+- DB_PASSWORD
+- DB_HOST
+- DB_PORT
 
 ### Redis (✅ Optional - Default values work with Docker)
-REDIS_HOST
-REDIS_LOCATION
-REDIS_PORT
-REDIS_DB
+- REDIS_HOST
+- REDIS_LOCATION
+- REDIS_PORT
+- REDIS_DB
 
 ### Email Configuration (⚠️ Required - Configure your SMTP settings)
-EMAIL_HOST
-EMAIL_PORT
-EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD
-EMAIL_USE_TLS
-EMAIL_USE_SSL
-DEFAULT_FROM_EMAIL
+- EMAIL_HOST
+- EMAIL_PORT
+- EMAIL_HOST_USER
+- EMAIL_HOST_PASSWORD
+- EMAIL_USE_TLS
+- EMAIL_USE_SSL
+- DEFAULT_FROM_EMAIL
 
 The .env file is excluded from version control (.gitignore), but a .env.template is provided as a template.
 Please copy .env.template to .env and fill in your own values before running the project.
