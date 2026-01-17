@@ -36,6 +36,42 @@ Videoflix is a Django-based, video streaming platform developed as part of the D
 
 Full list: requirements.txt (Installation guide see below)
 
+### Docker Installation
+```bash
+# 1. Clone the repository
+
+git clone https://github.com/Vincent-Goerner/Videoflix-backend.git
+cd Videoflix-backend
+
+# 2. Create .env using the 'git bash' console
+
+cd Videoflix-backend
+
+  # Windows
+  copy .env.template .env
+
+  # Linux/Mac
+  cp .env.template .env
+
+| ⚠️IMPORTANT
+| It is absolutely necessary that the .env is filled with your configurations!
+
+# 3. Build Docker Image
+
+docker-compose build
+
+# 4. Start Docker Container
+
+docker-compose up -d
+
+# 5. Run migrations
+
+docker-compose exec web python manage.py makemigrations
+docker-compose exec web python manage.py migrate
+```
+
+The server is accessible at http://localhost:8000.
+
 ### Local Setup
 ```bash
 # 1. Clone the repository
@@ -81,43 +117,11 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-### Docker Installation
-```bash
-# 1. Clone the repository
-
-git clone https://github.com/Vincent-Goerner/Videoflix-backend.git
-cd Videoflix-backend
-
-# 2. Create .env using the 'git bash' console
-
-cd Videoflix-backend
-
-  # Windows
-  copy .env.template .env
-
-  # Linux/Mac
-  cp .env.template .env
-
-| ⚠️IMPORTANT
-| It is absolutely necessary that the .env is filled with your configurations!
-
-# 3. Build Docker Image
-
-docker-compose build
-
-# 4. Start Docker Container
-
-docker-compose up -d
-
-# 5. Run migrations
-
-docker-compose exec web python manage.py makemigrations
-docker-compose exec web python manage.py migrate
-```
-
-The server is accessible at http://localhost:8000.
-
 ### Database Setup
+
+Docker Setup
+
+The database will be automaticly created with the docker-compose.yml
 
 Local Setup
 
@@ -148,10 +152,6 @@ Local Setup
 # 5. Grant privileges
   GRANT ALL PRIVILEGES ON DATABASE videoflix_db TO videoflix_user
 ```
-
-Docker Setup
-
-The database will be automaticly created with the docker-compose.yml
 
 ## 🚀 API Endpoints (Examples)
 
