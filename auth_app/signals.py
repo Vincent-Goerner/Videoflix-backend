@@ -62,12 +62,11 @@ def send_password_reset_email(sender, user, token, **kwargs):
         f"{frontend_url}/pages/auth/confirm_password.html"
         f"?uid={uidb64}&token={token}"
     )
-    hours = getattr(settings, 'PASSWORD_RESET_TIMEOUT', 86400) // 3600
 
     send_email(
         'Reset Your Videoflix Password',
         f'Please reset your password by visiting: {link}',
         'password_reset_mail.html',
-        {'user': user, 'reset_link': link, 'reset_link_valid_hours': hours},
+        {'reset_link': link},
         user.email,
     )

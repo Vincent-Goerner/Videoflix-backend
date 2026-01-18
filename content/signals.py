@@ -7,28 +7,45 @@ from django.db.models.signals import post_save, post_delete
 from content.models import Video
 from content.tasks import (
     convert_to_hls, 
-    delete_origin_video_file
+    delete_origin_video_file,
+    generate_thumbnail
 )
 
 
 @receiver (post_save, sender=Video)
 def video_post_save(sender, instance, created, **kwargs):
     """
-    Triggered after a Video instance is saved.
-    
-    - If the video is newly created and a video file exists:
-      1. Enqueue conversion of the uploaded video to HLS format.
-      2. After conversion, enqueue deletion of the original video file.
+    Convert a video file into HLS format using multiple quality profiles.
+    Generates segmented playlists (m3u8 + ts files) for adaptive streaming.
+    Stores the output under MEDIA_ROOT/videos/<video_id>/<resolution>/.
     """
-    if created and instance.video_file:
-        source = instance.video_file.path
-        if os.path.exists(source):
-            queue  = django_rq.get_queue('default', autocommit=True)
-            convert_video = queue.enqueue(convert_to_hls, source, instance.id)
-            queue.enqueue(
-                delete_origin_video_file, source,
-                depends_on=convert_video
-            )
+    if not instance.video_file:
+        return
+
+    source = instance.video_file.path
+    if not os.path.exists(source):
+        return
+
+    queue = django_rq.get_queue("default", autocommit=True)
+
+    if not instance.thumbnail:
+        queue.enqueue(
+            generate_thumbnail,
+            source,
+            instance.id
+        )
+
+    if created:
+        convert_job = queue.enqueue(
+            convert_to_hls,
+            source,
+            instance.id
+        )
+        queue.enqueue(
+            delete_origin_video_file,
+            source,
+            depends_on=convert_job
+        )
 
 
 @receiver(post_delete, sender=Video)       

@@ -26,8 +26,6 @@ services:
     volumes:
       - ./media:/app/media
       - ./static:/app/static
-      - videoflix_media:/app/media
-      - videoflix_static:/app/static
     ports:
       - "8000:8000"
     environment:

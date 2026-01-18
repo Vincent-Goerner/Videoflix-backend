@@ -1,6 +1,7 @@
 import os
 import subprocess
 from django.conf import settings
+from content.models import Video
 
 
 def convert_to_hls(input_file: str, video_id: int) -> None:
@@ -50,3 +51,29 @@ def delete_origin_video_file(source):
     """
     if os.path.isfile(source):
         os.remove(source)
+
+
+def generate_thumbnail(input_file: str, video_id: int, timestamp: str = "00:00:10") -> None:
+    """
+    Generate a thumbnail from a video at a specific timestamp using ffmpeg.
+    """
+    video = Video.objects.get(id=video_id)
+
+    thumbnail_dir = os.path.join(settings.MEDIA_ROOT, "thumbnail")
+    os.makedirs(thumbnail_dir, exist_ok=True)
+
+    thumbnail_path = os.path.join(thumbnail_dir, f"thumbnail_{video_id}.jpg")
+
+    cmd = [
+        "ffmpeg",
+        "-ss", timestamp,
+        "-i", input_file,
+        "-frames:v", "1",
+        "-vf", "scale=320:-1",
+        thumbnail_path,
+    ]
+
+    subprocess.run(cmd, check=True)
+
+    video.thumbnail.name = f"thumbnail/thumbnail_{video_id}.jpg"
+    video.save(update_fields=["thumbnail"])

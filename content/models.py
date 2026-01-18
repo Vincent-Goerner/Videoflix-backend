@@ -1,5 +1,6 @@
 from django.db import models
 from datetime import date
+from django.core.exceptions import ValidationError
 
 MOVIE_CATEGORY = [
     ('action', 'Action'),
@@ -21,8 +22,12 @@ class Video(models.Model):
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
     video_file = models.FileField(upload_to='videos', blank=True, null=True)
-    thumbnail = models.ImageField(upload_to="thumbnail/", blank=True, null=True)
-    category = models.CharField(max_length=30, choices=MOVIE_CATEGORY, default='')
+    thumbnail = models.ImageField(upload_to='thumbnail/', blank=True, null=True)
+    category = models.CharField(max_length=30, choices=MOVIE_CATEGORY, default='action')
 
     def __str__(self):
         return self.title
+    
+    def clean(self):
+        if not self.video_file:
+            raise ValidationError({'video_file': 'Video file is required.'})

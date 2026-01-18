@@ -3,6 +3,7 @@ from rest_framework import serializers
 from content.models import Video
 
 
+
 class VideoListSerializer(serializers.ModelSerializer):
     """
     Serialize Video objects with standard fields and a fully qualified thumbnail URL.
@@ -11,7 +12,15 @@ class VideoListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Video
-        fields = ['id', 'created_at', 'title', 'description', 'thumbnail_url', 'category']
+        fields = [
+            'id',
+            'created_at',
+            'title',
+            'description',
+            'thumbnail_url',
+            'category',
+            'video_file',
+        ]
 
     def get_thumbnail_url(self, obj):
         """
