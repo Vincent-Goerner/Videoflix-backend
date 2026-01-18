@@ -67,7 +67,7 @@ _build/
 *.bak
 *.old
 .DS_Store
-up.bat
+./up.bat
 
 
 # 🐇 Celery Worker File (optional, falls temporär erstellt)
