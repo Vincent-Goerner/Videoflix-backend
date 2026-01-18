@@ -59,7 +59,6 @@ _build/
 
 
 # 💻 IDEs & Editors
-
 .vscode/
 .idea/
 *.swp
@@ -67,9 +66,13 @@ _build/
 *.bak
 *.old
 .DS_Store
-./up.bat
 
 
 # 🐇 Celery Worker File (optional, falls temporär erstellt)
 
 videoflix/celery.py
+
+
+# Others
+
+up.bat
