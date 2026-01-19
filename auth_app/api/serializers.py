@@ -76,13 +76,6 @@ class LoginTokenObtainPairSerializer(serializers.Serializer):
 
         data['user'] = user
         return data
-    
-
-class PasswordResetSerializer(serializers.Serializer):
-    """
-    Serializer for initiating a password reset via email.
-    """
-    email = serializers.EmailField()
 
 
 class PasswordConfirmSerializer(serializers.Serializer):
@@ -93,11 +86,12 @@ class PasswordConfirmSerializer(serializers.Serializer):
     new_password = serializers.CharField(write_only=True, min_length=8)
     confirm_password = serializers.CharField(write_only=True)
 
-    def validate(self, data):
-        """
-        Validate that new_password and confirm_password are identical.
-        """
-        if data['new_password'] != data['confirm_password']:
+    def validate(self, attrs):
+        self._validate_password_match(attrs)
+        return attrs
+
+    def _validate_password_match(self, attrs):
+        if attrs["new_password"] != attrs["confirm_password"]:
             raise serializers.ValidationError(
-                {"confirm_password": "Passwords do not match."})
-        return data
+                {"confirm_password": "Passwords do not match."}
+            )
